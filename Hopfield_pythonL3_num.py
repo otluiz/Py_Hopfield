@@ -8,20 +8,14 @@
 # ## Standard Imports
 
 # In[3]:
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
-from functools import reduce
-
+import csv
 
 # ## Hopfield
 
 # In[361]:
-
-
 class hopfield(object):
     
     def __init__(self, patterns, noise_percentage, pattern_n_row, pattern_n_column, ib, epochs):
@@ -109,7 +103,8 @@ N = np.array((N0,N1,N2,N3,N4,N5,N6,N7,N8,N9))
 
 
 # In[333]:
-percentage = 0.50
+
+percentage = 0.50 ## percentual para ruído
 
 hp = hopfield(patterns=N, noise_percentage=percentage, 
               pattern_n_row=7, pattern_n_column=5, ib=0, epochs=1000)
@@ -117,20 +112,30 @@ hp.run()
 
 
 # In[334]:
+#----------- Informação para metrica das imagens -------------------
 
-print("Percent noise", percentage)
+per_med = [] ## lista para guardar a acuracia
+#per_med.append("Ruído: ")
+per_med.append(percentage) ##adiciona o primeiro elemento à lista
 
 dif = lambda x, y: x - y ## diferença entre matrizes X e Y
 
 def acuracia(x, n = 0):
     for i in range(0, len(x)):
-      if (x[i] != 0): 
+      if (x[i] == 0): 
         n += 1
     return n/len(x)
 
-per_med = []
-fig, axs = plt.subplots(nrows=6, ncols=5, figsize=(8, 15))
+#-------------- Impressão arquivos ----------------------------------
+def write_csv(palavras, caminho): 
+    row_list = [["Ruído", "1","2","3","4","5","6","7","8","9","0"],
+                palavras]
+    with open(caminho, "w", newline = '', encoding = 'utf-8') as caminho:
+        writer = csv.writer(caminho, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+        writer.writerows(row_list)
 
+
+fig, axs = plt.subplots(nrows=6, ncols=5, figsize=(8, 15))
 
 # ------- N0 -------
 axs[0][0].set_title('Pattern 0')
@@ -144,8 +149,8 @@ axs[2][0].imshow(hp.outputs.iloc[0,:].values.reshape(7,5))
 
 A0 = N0
 B0 = hp.outputs.iloc[0,:].values
-per_med = acuracia(dif(A0,B0))
-print(per_med)
+per_med.append(acuracia(dif(A0,B0)))
+#print(per_med)
 
 # ------- N1 -------
 axs[0][1].set_title('Pattern 1')
@@ -159,9 +164,8 @@ axs[2][1].imshow(hp.outputs.iloc[1,:].values.reshape(7,5))
 
 A1 = N1
 B1 = hp.outputs.iloc[1,:].values
-per_med = acuracia(dif(A1,B1))
-print(per_med)
-
+per_med.append(acuracia(dif(A1,B1)))
+#print(per_med)
 
 # ------- N2 -------
 axs[0][2].set_title('Pattern 2')
@@ -175,8 +179,8 @@ axs[2][2].imshow(hp.outputs.iloc[2,:].values.reshape(7,5))
 
 A2 = N2
 B2 = hp.outputs.iloc[2,:].values
-per_med = acuracia(dif(A2,B2))
-print(per_med)
+per_med.append(acuracia(dif(A2,B2)))
+#print(per_med)
 
 # ------- N3 -------
 axs[0][3].set_title('Pattern 3')
@@ -190,8 +194,8 @@ axs[2][3].imshow(hp.outputs.iloc[3,:].values.reshape(7,5))
 
 A3 = N3
 B3 = hp.outputs.iloc[3,:].values
-per_med = acuracia(dif(A3,B3))
-print(per_med)
+per_med.append(acuracia(dif(A3,B3)))
+#print(per_med)
 
 # ------- N4 -------
 axs[0][4].set_title('Pattern 4')
@@ -205,9 +209,8 @@ axs[2][4].imshow(hp.outputs.iloc[4,:].values.reshape(7,5))
 
 A4 = N4
 B4 = hp.outputs.iloc[4,:].values
-per_med = acuracia(dif(A4,B4))
-print(per_med)
-
+per_med.append(acuracia(dif(A4,B4)))
+#print(per_med)
 
 # ------- N5 -------
 axs[3][0].set_title('Pattern 5')
@@ -221,9 +224,8 @@ axs[5][0].imshow(hp.outputs.iloc[5,:].values.reshape(7,5))
 
 A5 = N5
 B5 = hp.outputs.iloc[5,:].values
-per_med = acuracia(dif(A5,B5))
-print(per_med)
-
+per_med.append(acuracia(dif(A5,B5)))
+#print(per_med)
 
 # ------- N6 -------
 axs[3][1].set_title('Pattern 6')
@@ -237,9 +239,8 @@ axs[5][1].imshow(hp.outputs.iloc[6,:].values.reshape(7,5))
 
 A6 = N6
 B6 = hp.outputs.iloc[6,:].values
-per_med = acuracia(dif(A6,B6))
-print(per_med)
-
+per_med.append(acuracia(dif(A6,B6)))
+#print(per_med)
 
 # ------- N7 -------
 axs[3][2].set_title('Pattern 7')
@@ -253,8 +254,8 @@ axs[5][2].imshow(hp.outputs.iloc[7,:].values.reshape(7,5))
 
 A7 = N7
 B7 = hp.outputs.iloc[7,:].values
-per_med = acuracia(dif(A7,B7))
-print(per_med)
+per_med.append(acuracia(dif(A7,B7)))
+#print(per_med)
 
 # ------- N8 -------
 axs[3][3].set_title('Pattern 8')
@@ -268,25 +269,29 @@ axs[5][3].imshow(hp.outputs.iloc[8,:].values.reshape(7,5))
 
 A8 = N8
 B8 = hp.outputs.iloc[8,:].values
-per_med = acuracia(dif(A8,B8))
-print(per_med)
+per_med.append(acuracia(dif(A8,B8)))
+#print(per_med)
 
 # ------- N9 -------
 axs[3][4].set_title('Pattern 9')
 axs[3][4].imshow(N9.reshape(7,5))
 
 axs[4][4].set_title('Noised 9')
-axs[4][4].imshow(hp.noised_img.iloc[5,:].values.reshape(7,5))
+axs[4][4].imshow(hp.noised_img.iloc[9,:].values.reshape(7,5))
 
 axs[5][4].set_title('HP Pattern 9')
 axs[5][4].imshow(hp.outputs.iloc[9,:].values.reshape(7,5))
 
 A9 = N9
 B9 = hp.outputs.iloc[9,:].values
-per_med = acuracia(dif(A9,B9))
+per_med.append(acuracia(dif(A9,B9)))
+#print(per_med)
+
+path = "/home/otluiz/Doutorado/RedesNeurais/Relatorio/Lista-3/numeros/"
+plt.savefig(path + "numeros_050.png", bbox_inches = 'tight')
+
 print(per_med)
 
-#path = "/home/otluiz/Doutorado/RedesNeurais/Relatorio/Lista-3/"
-#plt.savefig(path + "numeros1_8_1.png", bbox_inches = 'tight')
-
-#plt.show()
+plt.show()
+    
+write_csv(per_med, path + "numeros_050.csv")
